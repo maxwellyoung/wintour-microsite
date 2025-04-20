@@ -2,14 +2,19 @@
 
 import { useEffect, useState, useRef, Fragment } from "react";
 import Image from "next/image";
-import { Play, Pause, X, Plus, ArrowRight } from "lucide-react";
+import { Play, Pause, X, Plus, ArrowRight, Loader } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import Countdown from "@/components/Countdown";
+import dynamic from "next/dynamic";
 import Link from "next/link";
+
+const Countdown = dynamic(() => import("@/components/Countdown"), {
+  ssr: false,
+});
 
 export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [activeSection, setActiveSection] = useState<"main" | "about">("main");
   const [showLyrics, setShowLyrics] = useState(false);
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
@@ -79,13 +84,21 @@ export default function Home() {
   }, []);
 
   const togglePlayback = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      setIsLoading(true);
+      const audio = audioRef.current;
+      const onCanPlay = () => {
+        audio.play();
+        setIsPlaying(true);
+        setIsLoading(false);
+        audio.removeEventListener("canplay", onCanPlay);
+      };
+      audio.addEventListener("canplay", onCanPlay);
+      audio.load();
     }
   };
 
@@ -171,7 +184,7 @@ export default function Home() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center p-4"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 flex items-center justify-center p-4"
               onClick={() => setShowLyrics(false)}
             >
               <motion.div
@@ -179,10 +192,10 @@ export default function Home() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3 }}
-                className="bg-[#111] text-[#f5f4f0] max-w-screen-md w-full max-h-[90vh] overflow-auto rounded-lg border-2 border-rust shadow-lg"
+                className="bg-[#111] text-[#f5f4f0] max-w-screen-md w-full max-h-[80vh] overflow-y-auto overflow-x-hidden rounded-lg border-2 border-rust shadow-lg scrollbar-thin scrollbar-thumb-rust scrollbar-track-black"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="px-6 py-8 md:py-12 relative">
+                <div className="px-6 py-6 md:py-10 relative">
                   <button
                     onClick={() => setShowLyrics(false)}
                     className="absolute top-4 right-4 text-[#f5f4f0] hover:text-rust transition-colors z-50"
@@ -192,20 +205,18 @@ export default function Home() {
                     <X size={24} />
                   </button>
 
-                  <h2 className="font-mono text-4xl md:text-5xl uppercase text-rust mb-8 text-center">
+                  <h2 className="font-mono text-4xl md:text-5xl uppercase text-rust mb-6 text-center animate-fadeInUp">
                     LYRICS
                   </h2>
 
-                  <div className="space-y-4">
+                  <div className="space-y-6 px-2">
                     {lyrics.map((line, i) => (
                       <motion.div
                         key={i}
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: i * 0.02, duration: 0.4 }}
-                        className="font-mono uppercase text-lg md:text-xl leading-snug"
-                        onMouseEnter={() => cursorEnter("", "text")}
-                        onMouseLeave={cursorLeave}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.03, duration: 0.3 }}
+                        className="font-mono uppercase text-lg md:text-xl leading-relaxed text-center hover:text-rust transition-colors"
                       >
                         {line}
                       </motion.div>
@@ -224,7 +235,7 @@ export default function Home() {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="md:col-span-7 h-[50vh] md:h-screen relative"
+            className="md:col-span-7 h-[50vh] md:h-screen relative filter brightness-75 saturate-75"
           >
             <Image
               src="/images/wintour-cover.png"
@@ -288,11 +299,11 @@ export default function Home() {
                   <h2 className="text-rust text-6xl md:text-8xl font-bold tracking-tighter uppercase mb-2">
                     Wintour
                   </h2>
-                  <div className="mt-8 flex items-center">
+                  <div className="mt-4 flex items-center">
                     <div className="font-mono text-xs tracking-widest uppercase text-black/50 mr-4">
                       Release
                     </div>
-                    <div className="text-lg font-semibold text-black tracking-tight">
+                    <div className="text-lg font-semibold text-black/60 tracking-tight">
                       25 April 2025
                     </div>
                   </div>
@@ -301,7 +312,7 @@ export default function Home() {
                 <div className="space-y-8 pt-8 mt-auto">
                   <button
                     onClick={() => setShowLyrics(true)}
-                    className="bg-rust text-white py-3 px-5 rounded-md uppercase text-sm font-medium hover:bg-rust/90 transition-colors inline-flex items-center space-x-2"
+                    className="bg-rust text-white py-3 px-5 rounded-md uppercase text-sm font-medium hover:bg-rust/90 transition-colors inline-flex items-center space-x-2 mb-6"
                     onMouseEnter={() => cursorEnter("LYRICS", "button")}
                     onMouseLeave={cursorLeave}
                   >
@@ -312,16 +323,22 @@ export default function Home() {
                     />
                   </button>
 
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-4 mb-6">
                     <button
                       onClick={togglePlayback}
-                      className="w-16 h-16 rounded-full bg-rust flex items-center justify-center hover:bg-rust/90 transition-colors text-white"
+                      className="w-16 h-16 rounded-full bg-rust flex items-center justify-center hover:bg-rust/90 transition-colors text-white disabled:opacity-50"
                       onMouseEnter={() =>
-                        cursorEnter(isPlaying ? "PAUSE" : "PLAY", "button")
+                        cursorEnter(
+                          isPlaying ? "PAUSE" : isLoading ? "..." : "PLAY",
+                          "button"
+                        )
                       }
                       onMouseLeave={cursorLeave}
+                      disabled={isLoading}
                     >
-                      {isPlaying ? (
+                      {isLoading ? (
+                        <Loader size={24} className="animate-spin" />
+                      ) : isPlaying ? (
                         <Pause size={22} />
                       ) : (
                         <Play size={22} className="ml-1" />
@@ -356,7 +373,7 @@ export default function Home() {
                     <Countdown />
                   </div>
 
-                  <div className="mt-8 grid grid-cols-2 gap-4 mb-8 md:flex md:flex-wrap md:gap-4">
+                  <div className="mt-8 flex flex-wrap gap-4 mb-8 md:grid md:grid-cols-2 md:gap-4">
                     {streamingLinks.map(({ href, label }) => (
                       <Link
                         key={label}
@@ -458,8 +475,9 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-mono text-xs tracking-widest uppercase text-black/50 mb-2">
-                    © 2025
+                  <div className="font-mono text-xs tracking-widest uppercase text-black/50 mb-2 flex justify-end items-baseline space-x-1">
+                    <span>©</span>
+                    <span>2025</span>
                   </div>
                   <div className="text-sm">All Rights Reserved</div>
                 </div>
