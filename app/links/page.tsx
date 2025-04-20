@@ -15,7 +15,7 @@ export default function LinksPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-[#f5f4f0] flex flex-col items-center justify-center p-8 space-y-8">
+    <main className="min-h-screen bg-[#d8e3cf] flex flex-col items-center justify-center p-8 space-y-8">
       <h1 className="text-4xl font-bold uppercase tracking-tight">Connect</h1>
       <div className="w-full max-w-sm grid grid-cols-1 gap-4">
         {links.map(({ href, label }) => (

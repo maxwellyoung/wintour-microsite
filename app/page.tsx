@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, Fragment } from "react";
 import Image from "next/image";
-import { Play, Pause, X, Plus, ArrowRight, Loader } from "lucide-react";
+import { Play, Pause, X, Plus, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
@@ -14,7 +14,6 @@ const Countdown = dynamic(() => import("@/components/Countdown"), {
 
 export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [activeSection, setActiveSection] = useState<"main" | "about">("main");
   const [showLyrics, setShowLyrics] = useState(false);
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
@@ -84,21 +83,13 @@ export default function Home() {
   }, []);
 
   const togglePlayback = () => {
-    if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      setIsLoading(true);
-      const audio = audioRef.current;
-      const onCanPlay = () => {
-        audio.play();
-        setIsPlaying(true);
-        setIsLoading(false);
-        audio.removeEventListener("canplay", onCanPlay);
-      };
-      audio.addEventListener("canplay", onCanPlay);
-      audio.load();
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
     }
   };
 
@@ -235,7 +226,7 @@ export default function Home() {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="md:col-span-7 h-[50vh] md:h-screen relative filter brightness-75 saturate-75"
+            className="md:col-span-7 h-[50vh] md:h-screen relative"
           >
             <Image
               src="/images/wintour-cover.png"
@@ -299,11 +290,11 @@ export default function Home() {
                   <h2 className="text-rust text-6xl md:text-8xl font-bold tracking-tighter uppercase mb-2">
                     Wintour
                   </h2>
-                  <div className="mt-4 flex items-center">
+                  <div className="mt-8 flex items-center">
                     <div className="font-mono text-xs tracking-widest uppercase text-black/50 mr-4">
                       Release
                     </div>
-                    <div className="text-lg font-semibold text-black/60 tracking-tight">
+                    <div className="text-lg font-semibold text-black tracking-tight">
                       25 April 2025
                     </div>
                   </div>
@@ -312,7 +303,7 @@ export default function Home() {
                 <div className="space-y-8 pt-8 mt-auto">
                   <button
                     onClick={() => setShowLyrics(true)}
-                    className="bg-rust text-white py-3 px-5 rounded-md uppercase text-sm font-medium hover:bg-rust/90 transition-colors inline-flex items-center space-x-2 mb-6"
+                    className="bg-rust text-white py-3 px-5 rounded-md uppercase text-sm font-medium hover:bg-rust/90 transition-colors inline-flex items-center space-x-2"
                     onMouseEnter={() => cursorEnter("LYRICS", "button")}
                     onMouseLeave={cursorLeave}
                   >
@@ -323,22 +314,16 @@ export default function Home() {
                     />
                   </button>
 
-                  <div className="flex items-center space-x-4 mb-6">
+                  <div className="flex items-center space-x-4">
                     <button
                       onClick={togglePlayback}
-                      className="w-16 h-16 rounded-full bg-rust flex items-center justify-center hover:bg-rust/90 transition-colors text-white disabled:opacity-50"
+                      className="w-16 h-16 rounded-full bg-rust flex items-center justify-center hover:bg-rust/90 transition-colors text-white"
                       onMouseEnter={() =>
-                        cursorEnter(
-                          isPlaying ? "PAUSE" : isLoading ? "..." : "PLAY",
-                          "button"
-                        )
+                        cursorEnter(isPlaying ? "PAUSE" : "PLAY", "button")
                       }
                       onMouseLeave={cursorLeave}
-                      disabled={isLoading}
                     >
-                      {isLoading ? (
-                        <Loader size={24} className="animate-spin" />
-                      ) : isPlaying ? (
+                      {isPlaying ? (
                         <Pause size={22} />
                       ) : (
                         <Play size={22} className="ml-1" />
@@ -373,7 +358,7 @@ export default function Home() {
                     <Countdown />
                   </div>
 
-                  <div className="mt-8 flex flex-wrap gap-4 mb-8 md:grid md:grid-cols-2 md:gap-4">
+                  <div className="mt-8 grid grid-cols-2 gap-4 mb-8 md:flex md:flex-wrap md:gap-4">
                     {streamingLinks.map(({ href, label }) => (
                       <Link
                         key={label}
