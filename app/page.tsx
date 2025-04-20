@@ -10,7 +10,7 @@ export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [releaseDate] = useState(new Date("2025-04-25T00:00:00"));
   const [timeLeft, setTimeLeft] = useState(getTimeLeft());
-  const [activeSection, setActiveSection] = useState("main");
+  const [activeSection, setActiveSection] = useState<"main" | "about">("main");
   const [showLyrics, setShowLyrics] = useState(false);
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
   const [cursorText, setCursorText] = useState("");
@@ -247,10 +247,10 @@ export default function Home() {
           >
             <Image
               src="/images/wintour-cover.png"
-              alt="Maxwell Young - Wintour"
+              alt="Cover art for Maxwell Young's 'Wintour' featuring a jumper silhouette"
               fill
-              className="object-cover object-center"
-              priority
+              className="object-cover object-top"
+              loading="lazy"
             />
             <div className="absolute inset-0 bg-black/10 mix-blend-multiply" />
           </motion.div>
@@ -311,14 +311,16 @@ export default function Home() {
                     <div className="font-mono text-xs tracking-widest uppercase text-black/50 mr-4">
                       Release
                     </div>
-                    <div className="font-medium">25 April 2025</div>
+                    <div className="text-lg font-semibold text-black tracking-tight">
+                      25 April 2025
+                    </div>
                   </div>
                 </div>
 
                 <div className="space-y-8 mt-auto">
                   <button
                     onClick={() => setShowLyrics(true)}
-                    className="flex items-center space-x-2 font-medium group"
+                    className="bg-rust text-white py-3 px-5 rounded-md uppercase text-sm font-medium hover:bg-rust/90 transition-colors inline-flex items-center space-x-2"
                     onMouseEnter={() => cursorEnter("LYRICS", "button")}
                     onMouseLeave={cursorLeave}
                   >
@@ -332,7 +334,7 @@ export default function Home() {
                   <div className="flex items-center space-x-4">
                     <button
                       onClick={togglePlayback}
-                      className="w-14 h-14 rounded-full bg-rust flex items-center justify-center hover:bg-rust/90 transition-colors text-white"
+                      className="w-16 h-16 rounded-full bg-rust flex items-center justify-center hover:bg-rust/90 transition-colors text-white"
                       onMouseEnter={() =>
                         cursorEnter(isPlaying ? "PAUSE" : "PLAY", "button")
                       }
@@ -345,7 +347,7 @@ export default function Home() {
                       )}
                     </button>
                     <div className="flex-1">
-                      <div className="h-1 bg-black/10 relative rounded-full overflow-hidden">
+                      <div className="h-1 bg-black/20 relative rounded-full overflow-hidden">
                         <div
                           ref={progressRef}
                           className="absolute top-0 left-0 h-full bg-rust"
@@ -371,17 +373,27 @@ export default function Home() {
                       <div className="w-2 h-2 bg-rust rounded-full animate-pulse mt-1"></div>
                     </div>
                     <div suppressHydrationWarning className="font-mono text-xl">
-                      {timeLeft.days > 0 ? (
-                        <span>
-                          {timeLeft.days}D {timeLeft.hours}H {timeLeft.minutes}M{" "}
-                          {timeLeft.seconds}S
-                        </span>
-                      ) : (
-                        <span>
-                          {timeLeft.hours}H {timeLeft.minutes}M{" "}
-                          {timeLeft.seconds}S
-                        </span>
-                      )}
+                      <AnimatePresence mode="wait" initial={false}>
+                        <motion.div
+                          key={`${timeLeft.days}-${timeLeft.hours}-${timeLeft.minutes}-${timeLeft.seconds}`}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          {timeLeft.days > 0 ? (
+                            <span>
+                              {timeLeft.days}D {timeLeft.hours}H{" "}
+                              {timeLeft.minutes}M {timeLeft.seconds}S
+                            </span>
+                          ) : (
+                            <span>
+                              {timeLeft.hours}H {timeLeft.minutes}M{" "}
+                              {timeLeft.seconds}S
+                            </span>
+                          )}
+                        </motion.div>
+                      </AnimatePresence>
                     </div>
                   </div>
 
@@ -422,7 +434,7 @@ export default function Home() {
                   <div className="mt-12">
                     <button
                       onClick={() => setShowLyrics(true)}
-                      className="border border-black/20 py-3 px-6 hover:bg-black hover:text-white transition-colors group flex items-center justify-center space-x-2"
+                      className="bg-rust text-white py-3 px-5 rounded-md uppercase text-sm font-medium hover:bg-rust/90 transition-colors inline-flex items-center space-x-2"
                       onMouseEnter={() => cursorEnter("LYRICS", "button")}
                       onMouseLeave={cursorLeave}
                     >
@@ -492,7 +504,19 @@ export default function Home() {
         <audio
           ref={audioRef}
           src="https://ildii12az7.ufs.sh/f/wzsKGXUR0TSZ41xUVtolzU5k3FcGZ8dJQj92ALRwW0BhoKHe"
+          preload="none"
         />
+
+        <div className="fixed bottom-0 left-0 w-full bg-[#f5f4f0] p-4 md:hidden border-t border-black/10 z-50">
+          <button
+            className="bg-black text-white py-4 px-6 uppercase tracking-widest text-sm w-full hover:bg-black/90 transition-colors flex items-center justify-center space-x-2"
+            onMouseEnter={() => cursorEnter("SAVE", "button")}
+            onMouseLeave={cursorLeave}
+          >
+            <span>Pre-save</span>
+            <Plus size={16} />
+          </button>
+        </div>
       </main>
     </Fragment>
   );
