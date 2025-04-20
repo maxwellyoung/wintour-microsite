@@ -5,11 +5,11 @@ import Image from "next/image";
 import { Play, Pause, X, Plus, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import Countdown from "@/components/Countdown";
+import Link from "next/link";
 
 export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [releaseDate] = useState(new Date("2025-04-25T00:00:00"));
-  const [timeLeft, setTimeLeft] = useState(getTimeLeft());
   const [activeSection, setActiveSection] = useState<"main" | "about">("main");
   const [showLyrics, setShowLyrics] = useState(false);
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
@@ -50,31 +50,12 @@ export default function Home() {
     "i don't know why u make it feel like that",
   ];
 
-  function getTimeLeft() {
-    const now = new Date();
-    const difference = releaseDate.getTime() - now.getTime();
-
-    if (difference <= 0) {
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-    }
-
-    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-    const hours = Math.floor(
-      (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-    );
-    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-    return { days, hours, minutes, seconds };
-  }
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(getTimeLeft());
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
+  const streamingLinks = [
+    { href: "#", label: "Spotify" },
+    { href: "#", label: "Apple" },
+    { href: "#", label: "SoundCloud" },
+    { href: "#", label: "YouTube" },
+  ];
 
   useEffect(() => {
     const updateProgress = () => {
@@ -249,7 +230,7 @@ export default function Home() {
               src="/images/wintour-cover.png"
               alt="Cover art for Maxwell Young's 'Wintour' featuring a jumper silhouette"
               fill
-              className="object-cover object-top"
+              className="object-cover "
               loading="lazy"
             />
             <div className="absolute inset-0 bg-black/10 mix-blend-multiply" />
@@ -317,14 +298,14 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="space-y-8 mt-auto">
+                <div className="space-y-8 pt-8 mt-auto">
                   <button
                     onClick={() => setShowLyrics(true)}
                     className="bg-rust text-white py-3 px-5 rounded-md uppercase text-sm font-medium hover:bg-rust/90 transition-colors inline-flex items-center space-x-2"
                     onMouseEnter={() => cursorEnter("LYRICS", "button")}
                     onMouseLeave={cursorLeave}
                   >
-                    <span>View Lyrics</span>
+                    <span>Lyrics</span>
                     <ArrowRight
                       size={18}
                       className="transform group-hover:translate-x-1 transition-transform"
@@ -372,39 +353,25 @@ export default function Home() {
                       </span>
                       <div className="w-2 h-2 bg-rust rounded-full animate-pulse mt-1"></div>
                     </div>
-                    <div suppressHydrationWarning className="font-mono text-xl">
-                      <AnimatePresence mode="wait" initial={false}>
-                        <motion.div
-                          key={`${timeLeft.days}-${timeLeft.hours}-${timeLeft.minutes}-${timeLeft.seconds}`}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          {timeLeft.days > 0 ? (
-                            <span>
-                              {timeLeft.days}D {timeLeft.hours}H{" "}
-                              {timeLeft.minutes}M {timeLeft.seconds}S
-                            </span>
-                          ) : (
-                            <span>
-                              {timeLeft.hours}H {timeLeft.minutes}M{" "}
-                              {timeLeft.seconds}S
-                            </span>
-                          )}
-                        </motion.div>
-                      </AnimatePresence>
-                    </div>
+                    <Countdown />
                   </div>
 
-                  <button
-                    className="bg-black text-white py-4 px-6 uppercase tracking-widest text-sm w-full hover:bg-black/90 transition-colors flex items-center justify-center space-x-2"
-                    onMouseEnter={() => cursorEnter("SAVE", "button")}
-                    onMouseLeave={cursorLeave}
-                  >
-                    <span>Pre-save</span>
-                    <Plus size={16} />
-                  </button>
+                  <div className="mt-8 grid grid-cols-2 gap-4 mb-8 md:flex md:flex-wrap md:gap-4">
+                    {streamingLinks.map(({ href, label }) => (
+                      <Link
+                        key={label}
+                        href={href}
+                        onMouseEnter={() =>
+                          cursorEnter(label.toUpperCase(), "text")
+                        }
+                        onMouseLeave={cursorLeave}
+                        className="inline-flex items-center justify-center space-x-1 bg-rust text-white h-12 px-4 rounded-full uppercase text-xs tracking-widest hover:bg-rust/90 transition"
+                      >
+                        <span>{label}</span>
+                        <ArrowRight size={14} />
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
@@ -507,16 +474,8 @@ export default function Home() {
           preload="none"
         />
 
-        <div className="fixed bottom-0 left-0 w-full bg-[#f5f4f0] p-4 md:hidden border-t border-black/10 z-50">
-          <button
-            className="bg-black text-white py-4 px-6 uppercase tracking-widest text-sm w-full hover:bg-black/90 transition-colors flex items-center justify-center space-x-2"
-            onMouseEnter={() => cursorEnter("SAVE", "button")}
-            onMouseLeave={cursorLeave}
-          >
-            <span>Pre-save</span>
-            <Plus size={16} />
-          </button>
-        </div>
+        {/* Mobile streaming links sticky footer hidden on desktop */}
+        {/* Removed mobile-only pre-save links in favor of unified streaming CTA above */}
       </main>
     </Fragment>
   );
