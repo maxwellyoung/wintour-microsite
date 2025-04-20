@@ -191,6 +191,7 @@ export default function Home() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
               className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center p-4"
+              onClick={() => setShowLyrics(false)}
             >
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -198,6 +199,7 @@ export default function Home() {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3 }}
                 className="bg-[#111] text-[#f5f4f0] max-w-screen-md w-full max-h-[90vh] overflow-auto rounded-lg border-2 border-rust shadow-lg"
+                onClick={(e) => e.stopPropagation()}
               >
                 <div className="px-6 py-8 md:py-12 relative">
                   <button
