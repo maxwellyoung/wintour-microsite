@@ -58,7 +58,7 @@ export default function Home() {
     { href: "https://open.spotify.com/track/0HVhxu3jp6TkLbqN8fi8Fl?si=Hg5hAkD6SJCJYyeM8GI0fg", label: "Spotify" },
     { href: "https://music.apple.com/nz/album/wintour/1802842596?i=1802842597&l=en-GB", label: "Apple" },
     { href: "#", label: "SoundCloud" },
-    { href: "#", label: "YouTube" },
+    { href: "https://youtu.be/CVpatk_f0tg?si=YEzanTA7zeU3YlDQ", label: "YouTube" },
   ];
 
   useEffect(() => {
