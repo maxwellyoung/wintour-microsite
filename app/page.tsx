@@ -55,7 +55,7 @@ export default function Home() {
   ];
 
   const streamingLinks = [
-    { href: "#", label: "Spotify" },
+    { href: "https://open.spotify.com/track/0HVhxu3jp6TkLbqN8fi8Fl?si=Hg5hAkD6SJCJYyeM8GI0fg", label: "Spotify" },
     { href: "#", label: "Apple" },
     { href: "#", label: "SoundCloud" },
     { href: "#", label: "YouTube" },
