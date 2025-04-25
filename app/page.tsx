@@ -353,6 +353,22 @@ export default function Home() {
                     >
                       Website
                     </a>
+                    <a
+                      href="https://www.youtube.com/@maxwell_young"
+                      className="text-sm text-foreground hover:underline transition"
+                      onMouseEnter={() => cursorEnter("YOUTUBE", "text")}
+                      onMouseLeave={cursorLeave}
+                    >
+                      YouTube
+                    </a>
+                    <a
+                      href="https://soundcloud.com/maxwell_young"
+                      className="text-sm text-foreground hover:underline transition"
+                      onMouseEnter={() => cursorEnter("SOUNDCLOUD", "text")}
+                      onMouseLeave={cursorLeave}
+                    >
+                      SoundCloud
+                    </a>
                   </div>
                 </div>
                 <div className="text-right">
