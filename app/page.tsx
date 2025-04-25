@@ -345,6 +345,14 @@ export default function Home() {
                     >
                       Twitter
                     </a>
+                    <a
+                      href="https://www.maxwellyoung.info/"
+                      className="text-sm text-foreground hover:underline transition"
+                      onMouseEnter={() => cursorEnter("WEBSITE", "text")}
+                      onMouseLeave={cursorLeave}
+                    >
+                      Website
+                    </a>
                   </div>
                 </div>
                 <div className="text-right">
