@@ -20,7 +20,7 @@ const config = {
     },
     extend: {
       fontFamily: {
-        sans: ["Selectric-Orator", "sans-serif"],
+        sans: ["Space Grotesk", "Space Mono", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
