@@ -223,7 +223,7 @@ export default function Home() {
                 </h2>
                 <div className="mt-8 flex items-center">
                   <div className="font-mono text-xs uppercase text-foreground/50 mr-4">
-                    Release
+                    Released
                   </div>
                   <div className="text-lg font-semibold text-foreground tracking-tight">
                     25 April 2025
