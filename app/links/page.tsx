@@ -8,10 +8,16 @@ export const metadata = {
 
 export default function LinksPage() {
   const links = [
-    { href: "#", label: "Spotify" },
-    { href: "#", label: "Apple Music" },
-    { href: "#", label: "Instagram" },
-    { href: "#", label: "Twitter" },
+    {
+      href: "https://open.spotify.com/artist/5HONdRTLNvBjlD2LirKp0q?si=158b2846b4f942f3",
+      label: "Spotify",
+    },
+    {
+      href: "https://music.apple.com/nz/artist/maxwell-young/1113632139",
+      label: "Apple Music",
+    },
+    { href: "https://instagram.com/maxwell_young", label: "Instagram" },
+    { href: "https://twitter.com/internetmaxwell", label: "Twitter" },
   ];
 
   return (
