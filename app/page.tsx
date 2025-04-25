@@ -185,7 +185,7 @@ export default function Home() {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="md:col-span-7 h-[50vh] md:h-screen relative"
+            className="md:col-span-7 w-full aspect-square md:h-screen relative"
           >
             <Image
               src="/images/wintour-cover.png"
