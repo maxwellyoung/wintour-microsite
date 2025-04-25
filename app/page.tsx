@@ -314,7 +314,7 @@ export default function Home() {
                   </div>
                   <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                     <a
-                      href="#"
+                      href="https://open.spotify.com/artist/5HONdRTLNvBjlD2LirKp0q?si=158b2846b4f942f3"
                       className="text-sm text-foreground hover:underline transition"
                       onMouseEnter={() => cursorEnter("SPOTIFY", "text")}
                       onMouseLeave={cursorLeave}
@@ -322,7 +322,7 @@ export default function Home() {
                       Spotify
                     </a>
                     <a
-                      href="#"
+                      href="https://music.apple.com/nz/artist/maxwell-young/1113632139"
                       className="text-sm text-foreground hover:underline transition"
                       onMouseEnter={() => cursorEnter("APPLE", "text")}
                       onMouseLeave={cursorLeave}
@@ -330,7 +330,7 @@ export default function Home() {
                       Apple
                     </a>
                     <a
-                      href="#"
+                      href="https://instagram.com/maxwell_young"
                       className="text-sm text-foreground hover:underline transition"
                       onMouseEnter={() => cursorEnter("IG", "text")}
                       onMouseLeave={cursorLeave}
@@ -338,7 +338,7 @@ export default function Home() {
                       Instagram
                     </a>
                     <a
-                      href="#"
+                      href="https://twitter.com/internetmaxwell"
                       className="text-sm text-foreground hover:underline transition"
                       onMouseEnter={() => cursorEnter("TW", "text")}
                       onMouseLeave={cursorLeave}
